@@ -1,0 +1,45 @@
+/**
+ * files/css/style.css
+ *
+ * @author   Takako Miyagawa <nekoget@gmail.com>
+ * @link     http://www.netcommons.org NetCommons Project
+ * @license  http://www.netcommons.org/license.txt NetCommons License
+ */
+
+/*.files-modal {
+    background: none repeat scroll 0 0 #000;
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.files-modal.mce-in {
+	opacity: 0.3;
+}
+
+.files-modal .modal-dialog {
+	opacity: 1.3;
+}*/
+
+.file-upload-area {
+/*	border: 1px solid #dddddd;
+	padding-top: 20px;
+	padding-right: 5px;*/
+	padding-bottom: 5px;
+	text-align: center;
+}
+
+.file-upload-btn {
+	display: inline-block;
+    overflow: hidden;
+    position: relative;
+}
+
+.file-upload-btn input[type="file"] {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+	left: 0;
+}
