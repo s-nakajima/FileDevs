@@ -11,7 +11,7 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('FilesAppModel', 'Files.Model');
+App::uses('FilesAppModel', 'FileDevs.Model');
 //App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
 App::uses('UploadBehavior', 'Upload.Model/Behavior');
@@ -66,13 +66,13 @@ class FileModel extends FilesAppModel {
  */
 	public $hasMany = array(
         'FilesPlugin' => array(
-            'className'  => 'Files.FilesPlugin',
+            'className'  => 'FileDevs.FilesPlugin',
         ),
         'FilesRoom' => array(
-            'className'  => 'Files.FilesRoom',
+            'className'  => 'FileDevs.FilesRoom',
         ),
         'FilesUser' => array(
-            'className'  => 'Files.FilesUser',
+            'className'  => 'FileDevs.FilesUser',
         )
     );
 
@@ -95,7 +95,7 @@ class FileModel extends FilesAppModel {
  * @link http://book.cakephp.org/2.0/en/models/behaviors.html#using-behaviors
  */
 	public $actsAs = array(
-		'Files.YAUpload' => array(
+		'FileDevs.YAUpload' => array(
 			'fileBaseUrl' => self::FILE_BASE_URL,
 			'uploadDir' => self::UPLOAD_DIR,
 			'thumbnailSizes' => array(
@@ -304,10 +304,10 @@ CakeLog::debug('FindModel::afterFind()');
  */
 	public function saveFile($data) {
 		$this->loadModels([
-			'FileModel' => 'Files.FileModel',
-			'FilesPlugin' => 'Files.FilesPlugin',
-			'FilesRoom' => 'Files.FilesRoom',
-			'FilesUser' => 'Files.FilesUser',
+			'FileModel' => 'FileDevs.FileModel',
+			'FilesPlugin' => 'FileDevs.FilesPlugin',
+			'FilesRoom' => 'FileDevs.FilesRoom',
+			'FilesUser' => 'FileDevs.FilesUser',
 		]);
 
 		//トランザクションBegin
@@ -413,10 +413,10 @@ CakeLog::debug('FileModel::saveFileAssociated() $this->' . $model . '=' . $this-
 CakeLog::debug('FileModel::deleteFiles() $fileIds=' . print_r($fileIds, true));
 
 		$models = [
-			'FileModel' => 'Files.FileModel',
-			'FilesPlugin' => 'Files.FilesPlugin',
-			'FilesRoom' => 'Files.FilesRoom',
-			'FilesUser' => 'Files.FilesUser',
+			'FileModel' => 'FileDevs.FileModel',
+			'FilesPlugin' => 'FileDevs.FilesPlugin',
+			'FilesRoom' => 'FileDevs.FilesRoom',
+			'FilesUser' => 'FileDevs.FilesUser',
 		];
 		$this->loadModels($models);
 

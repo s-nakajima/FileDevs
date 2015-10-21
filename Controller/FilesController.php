@@ -9,7 +9,7 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('FilesAppController', 'Files.Controller');
+App::uses('FilesAppController', 'FileDevs.Controller');
 App::uses('CakeNumber', 'Utility');
 App::uses('File', 'Utility');
 
@@ -27,7 +27,7 @@ class FilesController extends FilesAppController {
  * @var array
  */
 	public $uses = array(
-		'Files.FileModel'
+		'FileDevs.FileModel'
 	);
 
 /**
@@ -36,7 +36,7 @@ class FilesController extends FilesAppController {
  * @var array
  */
 	public $components = array(
-		'Files.FileUpload',
+		'FileDevs.FileUpload',
 	);
 
 /**
@@ -85,7 +85,7 @@ CakeLog::debug('add() $this->data=' . print_r($this->data, true));
 			$ret = $this->FileModel->find('first', ['recursive' => -1]);
 CakeLog::debug('FileController::add() $ret=' . print_r($ret, true));
 
-			$this->layout = isset($this->params->query['layout']) ? $this->params->query['layout'] : 'Files.modal';
+			$this->layout = isset($this->params->query['layout']) ? $this->params->query['layout'] : 'FileDevs.modal';
 
 			$this->set('tabIndex', 0);
 

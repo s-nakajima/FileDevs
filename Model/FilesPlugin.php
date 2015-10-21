@@ -11,7 +11,7 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('FilesAppModel', 'Files.Model');
+App::uses('FilesAppModel', 'FileDevs.Model');
 
 /**
  * Summary for FilesContent Model

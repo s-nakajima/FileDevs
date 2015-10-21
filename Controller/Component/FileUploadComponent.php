@@ -11,7 +11,7 @@
 
 App::uses('Component', 'Controller');
 App::uses('Folder', 'Utility');
-App::uses('FileModel', 'Files.Model');
+App::uses('FileModel', 'FileDevs.Model');
 
 /**
  * NetCommonsFrame Component
