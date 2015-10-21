@@ -27,6 +27,27 @@ App::uses('Folder', 'Utility');
 class YAUploadBehavior extends UploadBehavior {
 
 /**
+ * File Base URL
+ *
+ * @var string
+ */
+	const FILE_BASE_URL = '/files/files/view/';
+
+/**
+ * File Download URL
+ *
+ * @var string
+ */
+	const FILE_DOWNLOAD_URL = '/files/files/download/';
+
+/**
+ * upload dir
+ *
+ * @var string
+ */
+	const UPLOAD_DIR = 'uploads';
+
+/**
  * rootDir variables
  *
  * @var array
@@ -38,14 +59,21 @@ class YAUploadBehavior extends UploadBehavior {
  *
  * @var array
  */
-	public $fileBaseUrl;
+	public $fileBaseUrl = self::FILE_BASE_URL;
+
+/**
+ * fileDownloadUrl variable
+ *
+ * @var array
+ */
+	public $fileDownloadUrl = self::FILE_DOWNLOAD_URL;
 
 /**
  * upload dir variable
  *
  * @var array
  */
-	public $uploadDir;
+	public $uploadDir = self::UPLOAD_DIR;
 
 /**
  * thumbnailSizes
@@ -60,7 +88,23 @@ class YAUploadBehavior extends UploadBehavior {
 	);
 
 /**
- * Initiate Upload behavior
+ * Override Upload befavior's default for NetCommons
+ *
+ * @var array
+ */
+	private $__default = array(
+		'maxSize' => 200097152,
+		'fields' => [
+			'type' => 'mimetype',
+			'dir' => 'path',
+		],
+		'thumbnailPrefixStyle' => false,
+		'nameCallback' => 'nameCallback',
+		'mode' => 0755,
+	);
+
+/**
+ * SetUp Upload behavior
  *
  * @param object $model instance of model
  * @param array $config array of configuration settings.
@@ -74,6 +118,10 @@ CakeLog::debug('NcUploadBehavior::setup()');
 			$this->fileBaseUrl = $config['fileBaseUrl'];
 			unset($config['fileBaseUrl']);
 		}
+		if (isset($config['fileDownloadUrl'])) {
+			$this->fileDownloadUrl = $config['fileDownloadUrl'];
+			unset($config['fileDownloadUrl']);
+		}
 		if (isset($config['uploadDir'])) {
 			$this->uploadDir = $config['uploadDir'];
 			unset($config['uploadDir']);
@@ -86,22 +134,25 @@ CakeLog::debug('NcUploadBehavior::setup()');
 			$this->rootDir = $config['rootDir'];
 			unset($config['rootDir']);
 		} else {
-			$this->rootDir = ROOT . DS . APP_DIR . DS . $this->uploadDir . DS;
+			$this->rootDir = APP . $this->uploadDir . DS;
 		}
-
 		//unset($config['fileBaseUrl'], $config['uploadDir']);
 
-		foreach ($config as $field => $options) {
+		$fields = array_keys($config);
+		foreach ($fields as $field) {
 			if (! isset($config[$field]['rootDir'])) {
 				$config[$field]['rootDir'] = $this->rootDir;
 			}
 			if (! isset($config[$field]['thumbnailSizes'])) {
 				$config[$field]['thumbnailSizes'] = $this->thumbnailSizes;
 			}
+
+			$config[$field] = Hash::merge($this->__default, $config[$field]);
 		}
 
 //CakeLog::debug('NcUploadBehavior::setup() $config=' . print_r($config, true));
-//CakeLog::debug('NcUploadBehavior::setup() $this->uploadDir=' . print_r($this->uploadDir, true));
+CakeLog::debug('NcUploadBehavior::setup() $this->uploadDir=' . print_r($this->uploadDir, true));
+CakeLog::debug('NcUploadBehavior::setup() $this->rootDir=' . print_r($this->rootDir, true));
 
 		parent::setup($model, $config);
 	}
@@ -118,7 +169,7 @@ CakeLog::debug('NcUploadBehavior::nameCallback() $currentName=' . print_r($curre
 CakeLog::debug('NcUploadBehavior::nameCallback() $data=' . print_r($data, true));
 CakeLog::debug('NcUploadBehavior::nameCallback() $options=' . print_r($options, true));
 
-		return $data['File']['slug'] . '.' . pathinfo($currentName, PATHINFO_EXTENSION);
+		return $data[$field]['File']['slug'] . '.' . pathinfo($currentName, PATHINFO_EXTENSION);
 	}
 
 /**
@@ -133,13 +184,25 @@ CakeLog::debug('NcUploadBehavior::_updateRecord()');
 CakeLog::debug('NcUploadBehavior::_updateRecord() $model->useDbConfig=' . $model->useDbConfig);
 CakeLog::debug('NcUploadBehavior::_updateRecord() $data=' . print_r($data, true));
 
-		if (isset($model->data['File']['path']) && $model->data['File']['path'] !== '' && isset($data['File']['path'])) {
-			$db = $model->getDataSource();
+		if (! $this->runtime) {
+			return;
+		}
 
-			$model->data['File']['path'] = $model->data['File']['path'] . substr($data['File']['path'], 1, -1);
-			$data['File']['path'] = $db->value($model->data['File']['path'], 'string');
+		$db = $model->getDataSource();
 
-			parent::_updateRecord($model, $data);
+		$fields = array_keys($this->runtime[$model->alias]);
+		foreach ($fields as $field) {
+			if (isset($model->data[$field][$model->FileModel->alias]['path']) && $model->data[$field][$model->FileModel->alias]['path'] !== '') {
+				$path = $model->data[$field][$model->FileModel->alias]['path'] . $model->id . '{DS}';
+				$model->FileModel->updateAll(
+					array(
+						'path' => $db->value($path, 'string')
+					),
+					array(
+						$model->FileModel->primaryKey => (int)$model->data[$field][$model->FileModel->alias]['id']
+					)
+				);
+			}
 		}
 	}
 
@@ -157,10 +220,10 @@ CakeLog::debug('NcUploadBehavior::beforeSave()');
 CakeLog::debug('NcUploadBehavior::beforeSave() $this->settings=' . print_r($this->settings, true));
 CakeLog::debug('NcUploadBehavior::beforeSave() $model->data=' . print_r($model->data, true));
 
-		$keys = array_keys($this->settings['File']);
-		foreach ($keys as $field) {
-			if (isset($model->data['File']['path']) && $model->data['File']['path'] !== '') {
-				$newPath = $this->__realPath($model->data['File']['path']);
+		$fields = array_keys($this->settings[$model->alias]);
+		foreach ($fields as $field) {
+			if (isset($model->data[$field]['File']['path']) && $model->data[$field]['File']['path'] !== '') {
+				$newPath = $this->__realPath($model->data[$field]['File']['path']);
 //CakeLog::debug('NcUploadBehavior::beforeSave() $newPath=' . print_r($newPath, true));
 //CakeLog::debug('NcUploadBehavior::beforeSave() $model->data[\'File\'][\'path\']=' . print_r($model->data['File']['path'], true));
 				$this->uploadSettings($model, $field, 'path', $newPath);
@@ -182,33 +245,40 @@ CakeLog::debug('NcUploadBehavior::beforeSave() $model->data=' . print_r($model->
 CakeLog::debug('NcUploadBehavior::afterFind()');
 //CakeLog::debug('NcUploadBehavior::afterFind() $this->uploadDir=' . print_r($this->uploadDir, true));
 
-		foreach ($results as $key => &$row) {
-			if (! isset($row['File']['path'])) {
-				continue;
-			}
+		foreach ($results as $key => &$rows) {
+			foreach ($rows as $alias => $row) {
+				if (! isset($row['path'])) {
+					continue;
+				}
 
-			//物理パスの設定
-			$results[$key]['File']['path'] = $this->__realPath($row['File']['path']);
+				//物理パスの設定
+				$results[$key][$alias]['path'] = $this->__realPath($row['path']);
 
-			//URLの設定
-			$url = $this->fileBaseUrl . $results[$key]['File']['slug'];
-			$results[$key]['File']['url'] =
-					$url . '.' . $results[$key]['File']['extension'];
+				//URLの設定
+				$url = $this->fileBaseUrl . $results[$key][$alias]['slug'];
+				$results[$key][$alias]['url'] =
+					$url . '.' . $results[$key][$alias]['extension'];
 
-			foreach ($this->thumbnailSizes as $type => $size) {
-				$filePath = $results[$key]['File']['path'] .
-							$results[$key]['File']['original_name'] . '_' . $type;
+				//Downloadの設定
+				$downloadUrl = $this->fileDownloadUrl . $results[$key][$alias]['slug'];
+				$results[$key][$alias]['download'] =
+					$downloadUrl . '.' . $results[$key][$alias]['extension'];
 
-				if (file_exists($filePath . '.' . $results[$key]['File']['extension'])) {
-					$results[$key]['File']['url_' . $type] =
-							$url . '_' . $type . '.' . $results[$key]['File']['extension'];
+				$types = array_keys($this->thumbnailSizes);
+				foreach ($types as $type) {
+					$filePath = $results[$key][$alias]['path'] .
+						$results[$key][$alias]['original_name'] . '_' . $type;
 
-				} elseif (file_exists($filePath . '.png')) {
-					$results[$key]['File']['url_' . $type] =
+					if (file_exists($filePath . '.' . $results[$key][$alias]['extension'])) {
+						$results[$key][$alias]['url_' . $type] =
+							$url . '_' . $type . '.' . $results[$key][$alias]['extension'];
+
+					} elseif (file_exists($filePath . '.png')) {
+						$results[$key][$alias]['url_' . $type] =
 							$url . '_' . $type . '.png';
+					}
 				}
 			}
-
 		}
 		return $results;
 	}

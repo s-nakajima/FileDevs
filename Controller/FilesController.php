@@ -65,13 +65,13 @@ class FilesController extends FilesAppController {
  */
 	public function upload() {
 //CakeLog::debug('add() $this->params=' . print_r($this->params, true));
-CakeLog::debug('add() $this->data=' . print_r($this->data, true));
-
 		//TODO: 権限チェック
 
 		if ($this->request->isPost()) {
+CakeLog::debug('upload() $this->data=' . print_r($this->data, true));
 			$data = $this->data;
 			$data['File'] = $this->FileUpload->upload($this);
+CakeLog::debug('upload() $data=' . print_r($data, true));
 			if (! $result = $this->FileModel->saveFile($data)) {
 				//TODO: Error
 				return;
@@ -83,7 +83,7 @@ CakeLog::debug('add() $this->data=' . print_r($this->data, true));
 
 		} else {
 			$ret = $this->FileModel->find('first', ['recursive' => -1]);
-CakeLog::debug('FileController::add() $ret=' . print_r($ret, true));
+CakeLog::debug('FileController::upload() $ret=' . print_r($ret, true));
 
 			$this->layout = isset($this->params->query['layout']) ? $this->params->query['layout'] : 'FileDevs.modal';
 
@@ -118,9 +118,9 @@ CakeLog::debug('FileController::add() $ret=' . print_r($ret, true));
 				'File.role_type', 'FilesPlugin.plugin_key', 'FilesRoom.room_id', 'FilesUser.user_id'
 			];
 
-			$this->set('tokenFields', $tokenFields);
-			$this->set('hiddenFields', $hiddenFields);
-			$this->set('unlockField', 'File.' . FileModel::INPUT_NAME);
+//			$this->set('tokenFields', $tokenFields);
+//			$this->set('hiddenFields', $hiddenFields);
+//			$this->set('unlockField', 'File.' . FileModel::INPUT_NAME);
 			$this->set('fileOptions', $this->request->data);
 			$this->set('accept', $this->params->query['accept']);
 		}
