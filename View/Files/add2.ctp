@@ -28,9 +28,9 @@
 		echo $this->fetch('script');
 	?>
 
-<?php echo $this->Html->script('/files/js/tab.js', false); ?>
-<?php echo $this->Html->script('/files/js/files.js', false); ?>
-<?php echo $this->Html->css('/files/css/style.css', false); ?>
+<?php echo $this->Html->script('/file_devs/js/tab.js', false); ?>
+<?php echo $this->Html->script('/file_devs/js/files.js', false); ?>
+<?php echo $this->Html->css('/file_devs/css/style.css', false); ?>
 <?php echo $this->Html->script('/wisywig/js/wisywig.js', false); ?>
 
 

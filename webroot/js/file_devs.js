@@ -47,7 +47,7 @@ NetCommonsApp.factory('showFileUploader', ['$http', '$modal', '$q',
                 pluginKey: ''
               }, options);
 
-      $http.get('/files/files/upload',
+      $http.get('/file_devs/files/upload',
           {
             params: params,
             cache: false,
@@ -109,8 +109,8 @@ NetCommonsApp.service('fileUploader', ['$http', '$q', function($http, $q) {
         var deferred = $q.defer();
         var promise = deferred.promise;
 
-        $http.get('/net_commons/net_commons/csrfToken.json')
-          .success(function(data) {
+//        $http.get('/net_commons/net_commons/csrfToken.json')
+//          .success(function(data) {
               //POSTデータ生成
               var formData = new FormData();
 
@@ -124,10 +124,10 @@ NetCommonsApp.service('fileUploader', ['$http', '$q', function($http, $q) {
               }, formData);
 
               formData.append('data[File][' + name + ']', file);
-              formData.append('data[_Token][key]', data.data._Token.key);
+//              formData.append('data[_Token][key]', data.data._Token.key);
 
               //POSTリクエスト
-              $http.post('/files/files/upload.json', formData, {
+              $http.post('/file_devs/files/upload.json', formData, {
                     transformRequest: angular.identity,
                     headers: {
                       //'Accept': 'text/html',
@@ -144,11 +144,11 @@ NetCommonsApp.service('fileUploader', ['$http', '$q', function($http, $q) {
                   //error condition
                   deferred.reject(data, status);
                 });
-          })
-        .error(function(data, status) {
-            //Token error condition
-            deferred.reject(data, status);
-          });
+//          })
+//        .error(function(data, status) {
+//            //Token error condition
+//            deferred.reject(data, status);
+//          });
 
         promise.success = function(fn) {
           promise.then(fn);
@@ -306,7 +306,7 @@ console.log(modalParams);
             }
           }, params);
 
-          $http.delete('/files/files/delete.json', {params: params});
+          $http.delete('/file_devs/files/delete.json', {params: params});
         }
          $modalInstance.dismiss('cancel');
       };

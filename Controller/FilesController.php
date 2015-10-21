@@ -44,9 +44,9 @@ class FilesController extends FilesAppController {
  *
  * @var array
  */
-	public $helpers = array(
-		'NetCommons.Token'
-	);
+//	public $helpers = array(
+//		'NetCommons.Token'
+//	);
 
 /**
  * beforeFilter
@@ -79,7 +79,7 @@ CakeLog::debug('add() $this->data=' . print_r($this->data, true));
 			$result[$this->FileModel->alias]['readableSize'] =
 					CakeNumber::toReadableSize($result[$this->FileModel->alias]['size']);
 
-			$this->renderJson($result);
+			$this->NetCommons->renderJson($result);
 
 		} else {
 			$ret = $this->FileModel->find('first', ['recursive' => -1]);

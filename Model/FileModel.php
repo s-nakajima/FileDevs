@@ -27,7 +27,7 @@ class FileModel extends FilesAppModel {
  *
  * @var string
  */
-	const FILE_BASE_URL = '/files/files/download/';
+	const FILE_BASE_URL = '/file_devs/files/download/';
 
 /**
  * upload dir
@@ -143,24 +143,24 @@ class FileModel extends FilesAppModel {
 				),
 			),
 			'name' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' =>  __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					'required' => true,
 				),
 			),
 			'slug' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' =>  __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					'required' => true,
 				),
 			),
 			'path' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' =>  __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					//'required' => true,
@@ -168,16 +168,16 @@ class FileModel extends FilesAppModel {
 				),
 			),
 			'extension' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' =>  __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					'required' => true,
 				),
 			),
 			'mimetype' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' =>  __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					//'required' => true,
@@ -192,8 +192,8 @@ class FileModel extends FilesAppModel {
 				),
 			),
 			'role_type' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' =>  __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					'required' => true,
@@ -311,8 +311,7 @@ CakeLog::debug('FindModel::afterFind()');
 		]);
 
 		//トランザクションBegin
-		$dataSource = $this->getDataSource();
-		$dataSource->begin();
+		$this->begin();
 
 		try {
 			//validationを実行
@@ -336,14 +335,11 @@ CakeLog::debug('FindModel::afterFind()');
 			}
 
 			//トランザクションCommit
-			$dataSource->commit();
+			$this->commit();
 
 		} catch (Exception $ex) {
 			//トランザクションRollback
-			$dataSource->rollback();
-			//エラー出力
-			CakeLog::write(LOG_ERR, $ex);
-			throw $ex;
+			$this->rollback($ex);
 		}
 
 		return $file;

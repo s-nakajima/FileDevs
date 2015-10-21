@@ -26,7 +26,7 @@
 		<!--<br />-->
 	<?php //endif; ?>
 
-	<?php echo __d('files', 'アップロード'); ?>
+	<?php echo __d('file_devs', 'アップロード'); ?>
 </div>
 
 <div class="modal-body">
@@ -43,7 +43,7 @@
 		</button>
 
 		<button type="button" class="btn btn-primary" ng-click="upload()">
-			<?php echo __d('files', 'ファイルの挿入'); ?>
+			<?php echo __d('file_devs', 'ファイルの挿入'); ?>
 		</button>
 	</div>
 </div>

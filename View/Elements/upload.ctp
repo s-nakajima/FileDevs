@@ -13,9 +13,9 @@
 <?php $this->startIfEmpty('contentForUpload'); ?>
 
 <?php
-$this->Token->unlockField($unlockField);
-$tokens = $this->Token->getToken($tokenFields, $hiddenFields);
-$fileOptions += $tokens;
+//$this->Token->unlockField($unlockField);
+//$tokens = $this->Token->getToken($tokenFields, $hiddenFields);
+//$fileOptions += $tokens;
 ?>
 
 <form accept-charset="utf-8" method="post" enctype="multipart/form-data">

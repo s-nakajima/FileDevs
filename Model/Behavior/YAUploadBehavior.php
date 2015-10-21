@@ -155,6 +155,7 @@ CakeLog::debug('NcUploadBehavior::_updateRecord() $data=' . print_r($data, true)
 	public function beforeSave(Model $model, $options = array()) {
 CakeLog::debug('NcUploadBehavior::beforeSave()');
 CakeLog::debug('NcUploadBehavior::beforeSave() $this->settings=' . print_r($this->settings, true));
+CakeLog::debug('NcUploadBehavior::beforeSave() $model->data=' . print_r($model->data, true));
 
 		$keys = array_keys($this->settings['File']);
 		foreach ($keys as $field) {
@@ -224,6 +225,9 @@ CakeLog::debug('FindModel::__realPath()');
 			'{ROOT}'	=> $this->rootDir,
 			'{DS}'		=> DS,
 		);
+CakeLog::debug('FindModel::__realPath() array_keys($replacements)' . print_r(array_keys($replacements), true));
+CakeLog::debug('FindModel::__realPath() array_values($replacements)' . print_r(array_values($replacements), true));
+CakeLog::debug('FindModel::__realPath() $path' . print_r($path, true));
 
 		$path = Folder::slashTerm(
 			str_replace(
